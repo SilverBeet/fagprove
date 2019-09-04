@@ -3,13 +3,16 @@
     <div class="modalMask">
       <div class="modalContainer">
         <button class="modalBtn" @click="$emit('close')">X</button>
-        <div>
-          <img class="star" src="https://upload.wikimedia.org/wikipedia/en/e/e5/Yellow_Star.png" alt="star">
+        <div v-if="showStar()">
+          <img class="star" src="https://purepng.com/public/uploads/large/purepng.com-gold-starstargeometricallydecagonconcavestardomyellow-stargold-1421526501484pjepy.png" alt="star">
+        </div>
+        <div v-else>
+          <img class="star" src="https://purepng.com/public/uploads/large/purepng.com-silver-starstargeometricallydecagonconcavestardomclipartsilver-1421526502895pbjlx.png" alt="star">
         </div>
         <div class="playerInfo">
           <h3 class="playerName"> Navn: {{ player.name }} </h3>
           <h4> {{ player.correctCount }} - Riktige </h4>
-          <h4> {{ player.failCount }} - Feil  </h4>
+          <h4> {{ player.wrongCount }} - Feil  </h4>
         </div>
       </div>
     </div>
@@ -18,20 +21,10 @@
 
 <script>
 export default {
-  props: {
-    player: {
-      name: {
-        type: String,
-        default: '',
-      },
-      correctCount: {
-        type: Number,
-        default: 0,
-      },
-      failCount: {
-        type: Number,
-        default: 0,
-      },
+  props: ['player'],
+  methods: {
+    showStar() {
+      return this.player.correctCount === 15
     },
   },
 };
@@ -56,7 +49,7 @@ export default {
   border-radius: 10px;
   width: 500px;
   height: 200px;
-  background-color: rgba(182, 182, 182, 0.616);
+  background-color: rgb(184, 190, 181);
 }
 
 .playerInfo {
@@ -70,7 +63,6 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: auto;
   width: 175px;
   padding: 20px;
 }

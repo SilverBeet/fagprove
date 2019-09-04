@@ -3,6 +3,7 @@
     <h1 class="title">Øve på gangetabellen</h1>
     <div class="formContainer">
       <form class="form" @submit.prevent="start" v-show="!isPlaying">
+        <div class="errorMsg">{{ errorMsg }}</div>
         <input type="text" placeholder="Navn" v-model="player.name" class="nameInput">
         <div>
           <ul class="numberList">
@@ -23,11 +24,13 @@
       </form>
       <div class="gameContainer" v-show="isPlaying">
         <div class="equation">
-           {{ player.currentNumber }} X {{ randomNumber }}
+          <div class="msg correct" v-show="isCorrect">Riktig</div>
+          <div class="msg wrong" v-show="isCorrect === false">Feil</div>
+           {{ player.currentNumber }} <span class="times">x</span> {{ randomNumber }}
         </div>
-        <form @submit.prevent="checkOnSubmit">
-          <input class="answer" type="number" v-model="player.guess" @input.prevent="checkOnInput">
-        </form>
+        <div class="answerWrapper">
+          Svar: <input class="answer" type="number" v-model="player.guess" @input.prevent="checkOnInput">
+        </div>
       </div>
     </div>
     <modal v-show="showModal" :player="previousPlayer"  @close="showModal = false"/>
@@ -48,7 +51,7 @@ export default {
       player: {
         name: '',
         correctCount: 0,
-        failCount: 0,
+        wrongCount: 0,
         guess: null,
         selectedNumbers: [],
         currentNumber: null,
@@ -56,51 +59,84 @@ export default {
       previousPlayer: {
         name: '',
         correctCount: 0,
-        failCount: 0,
-        guess: null,
-        selectedNumbers: [],
-        currentNumber: null,
+        wrongCount: 0,
       },
+      isCorrect: null,
       correctAnswer: null,
       equationCount: 0,
       randomNumber: null,
       isPlaying: false,
       showModal: false,
+      nextNum: null,
+      errorMsg: '',
       numbers: [...Array(11).keys()].slice(1),
     };
   },
 
   methods: {
     start() {
-      if (this.player.name === '') return;
-      if (this.player.selectedNumbers.length === 0) return;
+      if (this.required()) return
       this.isPlaying = true;
-      this.player.currentNumber = this.player.selectedNumbers[Math.floor(Math.random() * this.player.selectedNumbers.length)];
-      this.randomNumber = (Math.floor(Math.random() * 10) + 1);
-      this.correctAnswer = (this.player.currentNumber * this.randomNumber);
+      const randomSelected = Math.floor(Math.random() * this.player.selectedNumbers.length);
+      this.player.currentNumber = this.player.selectedNumbers[randomSelected];
+      // this.randomNumber = this.randomize()
+      this.correctAnswer = (this.player.currentNumber * this.randomize());
+    },
+    required() {
+      if (this.player.name === '') {
+        this.errorMsg = 'Vennligst fyll inn et navn.';
+        return true
+      }
+      if (this.player.selectedNumbers.length === 0) {
+        this.errorMsg = 'Vennligst velg ett eller flere tall.';
+        return true
+      }
     },
     checkOnInput() {
-      if (Number(this.player.guess) === this.correctAnswer) {
-        this.player.correctCount += 1;
-        this.generateEquation();
+      const userGuessLen = this.player.guess.toString().length;
+      const correctAnswerLen = this.correctAnswer.toString().length;
+      if (this.player.guess === '') this.player.guess = null;
+      if (userGuessLen === correctAnswerLen) {
+        if (Number(this.player.guess) === this.correctAnswer) {
+          this.player.correctCount += 1;
+          this.isCorrect = true;
+          setTimeout(() => {
+            this.generateEquation();
+          }, 500);
+        } else {  
+          this.isCorrect = false;
+          setTimeout(() => {
+            this.player.wrongCount += 1;
+            this.generateEquation();
+          }, 500)
+        }
       }
     },
-    checkOnSubmit() {
-      if (Number(this.player.guess) === this.correctAnswer) {
-        this.player.correctCount += 1;
-        this.generateEquation();
-      } else {
-        this.player.failCount += 1;
-        this.generateEquation();
+    randomize() {
+      const index = Math.floor(Math.random() * 10) + 1;
+      if (this.randomNumber !== this.nextNum) {
+        if (isNaN(this.randomNumber)) this.randomNumber = 1;
+          else this.randomNumber = this.nextNum;
+      } else if (this.randomNumber === this.nextNum) {
+        if (isNaN(this.randomNumber)) this.randomNumber = 1;
+          else this.randomNumber = (this.nextNum === 10 ? this.nextNum - 1 : this.nextNum + 1);
       }
+      
+      this.nextNum = index;
+
+      console.log(this.randomNumber, this.nextNum, index)
+      return this.randomNumber;
+
     },
     generateEquation() {
       this.resetInput();
       this.equationCount += 1;
-      if (this.equationCount === 10) this.endGame();
-      this.player.currentNumber = this.player.selectedNumbers[Math.floor(Math.random() * this.player.selectedNumbers.length)];
+      if (this.equationCount === 15) this.endGame();
+      this.isCorrect = null;
+      const randomSelected = Math.floor(Math.random() * this.player.selectedNumbers.length);
+      this.player.currentNumber = this.player.selectedNumbers[randomSelected];
       this.randomNumber = (Math.floor(Math.random() * 10) + 1);
-      this.correctAnswer = (this.player.currentNumber * this.randomNumber);
+      this.correctAnswer = (this.player.currentNumber * this.randomize());
     },
     resetInput() {
       this.player.guess = null;
@@ -110,7 +146,7 @@ export default {
       this.player = {
         name: '',
         correctCount: 0,
-        failCount: 0,
+        wrongCount: 0,
         guess: null,
         selectedNumbers: [],
         currentNumber: null,
@@ -225,32 +261,62 @@ body {
   display: block;
   background-color: rgb(64, 68, 60);
   border-radius: 10px;
-
+  position: relative;
   width: 300px;
   padding: 50px 0;
   text-align: center;
   color: white;
-  margin: 50px auto;
+  margin: 75px auto;
   font-size: 70px;
 }
 
+
+.answerWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .answer {
-  display: block;
+  display: inline-block;
   width: 100px;
   font-size: 20px;
   border: none;
   border-bottom: 1px solid black;
   color: white;
   background-color: #acb6b0;
-  margin: 50px auto;
   outline: none;
   text-align: center;
 }
+
+.msg {
+  font-size: 20px;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  margin-bottom: 20px;
+}
+
+.wrong {
+  color: rgba(255, 0, 0, 0.698);
+}
+
+.correct {
+  color: green;
+}
+
 
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.errorMsg {
+  display: block;
+  color: rgba(255, 0, 0, 0.698);
+  margin: 25px auto;
 }
 
 </style>
