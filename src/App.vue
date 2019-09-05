@@ -26,6 +26,7 @@
         <div class="equation">
           <div class="msg correct" v-show="isCorrect">Riktig</div>
           <div class="msg wrong" v-show="isCorrect === false">Feil</div>
+          <div class="eqCount">{{ equationCount }} av 15</div> 
            {{ player.currentNumber }} <span class="times">x</span> {{ randomNumber }}
         </div>
         <div class="answerWrapper">
@@ -40,6 +41,7 @@
 <script>
 
 import modal from './components/scoreModal.vue';
+import { setTimeout } from 'timers';
 
 export default {
   name: 'app',
@@ -77,18 +79,25 @@ export default {
     start() {
       if (this.required()) return
       this.isPlaying = true;
+      this.equationCount += 1;
       const randomSelected = Math.floor(Math.random() * this.player.selectedNumbers.length);
       this.player.currentNumber = this.player.selectedNumbers[randomSelected];
-      // this.randomNumber = this.randomize()
-      this.correctAnswer = (this.player.currentNumber * this.randomize());
+      this.randomNumber = this.randomize();
+      this.correctAnswer = (this.player.currentNumber * this.randomNumber);
     },
     required() {
       if (this.player.name === '') {
         this.errorMsg = 'Vennligst fyll inn et navn.';
+        setTimeout(() => {
+          this.errorMsg = '';
+        }, 2000);
         return true
       }
       if (this.player.selectedNumbers.length === 0) {
         this.errorMsg = 'Vennligst velg ett eller flere tall.';
+        setTimeout(() => {
+          this.errorMsg = '';
+        }, 2000);
         return true
       }
     },
@@ -113,30 +122,25 @@ export default {
       }
     },
     randomize() {
-      const index = Math.floor(Math.random() * 10) + 1;
       if (this.randomNumber !== this.nextNum) {
-        if (isNaN(this.randomNumber)) this.randomNumber = 1;
-          else this.randomNumber = this.nextNum;
+        this.randomNumber = this.nextNum;
       } else if (this.randomNumber === this.nextNum) {
-        if (isNaN(this.randomNumber)) this.randomNumber = 1;
-          else this.randomNumber = (this.nextNum === 10 ? this.nextNum - 1 : this.nextNum + 1);
+        this.randomNumber = (this.nextNum === 10 ? this.nextNum - 1 : this.nextNum + 1);
       }
-      
-      this.nextNum = index;
 
-      console.log(this.randomNumber, this.nextNum, index)
+      this.nextNum = Math.floor(Math.random() * 10) + 1;;
+
       return this.randomNumber;
-
     },
     generateEquation() {
       this.resetInput();
       this.equationCount += 1;
-      if (this.equationCount === 15) this.endGame();
+      if (this.equationCount === 16) this.endGame();
       this.isCorrect = null;
       const randomSelected = Math.floor(Math.random() * this.player.selectedNumbers.length);
       this.player.currentNumber = this.player.selectedNumbers[randomSelected];
-      this.randomNumber = (Math.floor(Math.random() * 10) + 1);
-      this.correctAnswer = (this.player.currentNumber * this.randomize());
+      this.randomNumber = this.randomize();
+      this.correctAnswer = (this.player.currentNumber * this.randomNumber);
     },
     resetInput() {
       this.player.guess = null;
@@ -249,15 +253,16 @@ body {
   background-color: transparent;
   width: 150px;
   outline: none;
-  transition: 0.4s ease-in-out;
+  transition: 0.2s ease-in;
 }
 
 .submit:hover {
-  box-shadow: 0px 10px 10px -7px rgb(0, 0, 0);
+  color: rgb(64, 68, 60);
 }
 
 
 .equation {
+  font-family: monospace;
   display: block;
   background-color: rgb(64, 68, 60);
   border-radius: 10px;
@@ -265,7 +270,7 @@ body {
   width: 300px;
   padding: 50px 0;
   text-align: center;
-  color: white;
+  color: #dbdbdb;
   margin: 75px auto;
   font-size: 70px;
 }
@@ -317,6 +322,11 @@ input[type=number]::-webkit-outer-spin-button {
   display: block;
   color: rgba(255, 0, 0, 0.698);
   margin: 25px auto;
+}
+
+.eqCount {
+  font-size: 15px;
+  color: rgb(141, 141, 141);
 }
 
 </style>

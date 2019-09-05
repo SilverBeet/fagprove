@@ -24,7 +24,7 @@ export default {
   props: ['player'],
   methods: {
     showStar() {
-      return this.player.correctCount === 15
+      return this.player.correctCount === 15;
     },
   },
 };
