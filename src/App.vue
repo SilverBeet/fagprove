@@ -41,7 +41,6 @@
 <script>
 
 import modal from './components/scoreModal.vue';
-import { setTimeout } from 'timers';
 
 export default {
   name: 'app',
