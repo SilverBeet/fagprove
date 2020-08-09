@@ -133,8 +133,8 @@ export default {
     },
     generateEquation() {
       this.resetInput();
+      if (this.equationCount === 15) this.endGame();
       this.equationCount += 1;
-      if (this.equationCount === 16) this.endGame();
       this.isCorrect = null;
       const randomSelected = Math.floor(Math.random() * this.player.selectedNumbers.length);
       this.player.currentNumber = this.player.selectedNumbers[randomSelected];
