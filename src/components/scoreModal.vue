@@ -3,16 +3,24 @@
     <div class="modalMask">
       <div class="modalContainer">
         <button class="modalBtn" @click="$emit('close')">X</button>
-        <div v-if="showStar()">
-          <img class="star" src="https://purepng.com/public/uploads/large/purepng.com-gold-starstargeometricallydecagonconcavestardomyellow-stargold-1421526501484pjepy.png" alt="star">
+        <div v-if="isAllCorrect">
+          <img
+            class="star"
+            src="https://purepng.com/public/uploads/large/purepng.com-gold-starstargeometricallydecagonconcavestardomyellow-stargold-1421526501484pjepy.png"
+            alt="star"
+          />
         </div>
         <div v-else>
-          <img class="star" src="https://purepng.com/public/uploads/large/purepng.com-silver-starstargeometricallydecagonconcavestardomclipartsilver-1421526502895pbjlx.png" alt="star">
+          <img
+            class="star"
+            src="https://purepng.com/public/uploads/large/purepng.com-silver-starstargeometricallydecagonconcavestardomclipartsilver-1421526502895pbjlx.png"
+            alt="star"
+          />
         </div>
         <div class="playerInfo">
-          <h3 class="playerName"> Navn: {{ player.name }} </h3>
-          <h4> {{ player.correctCount }} - Riktige </h4>
-          <h4> {{ player.wrongCount }} - Feil  </h4>
+          <h3 class="playerName">Name: {{ player.name }}</h3>
+          <h4>{{ player.correctCount }} - Correct</h4>
+          <h4>{{ player.wrongCount }} - Wrong</h4>
         </div>
       </div>
     </div>
@@ -22,8 +30,8 @@
 <script>
 export default {
   props: ['player'],
-  methods: {
-    showStar() {
+  computed: {
+    isAllCorrect() {
       return this.player.correctCount === 15;
     },
   },
@@ -38,9 +46,8 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, .5);
-  display: table;
-  transition: opacity .3s ease;
+  background-color: #00000080;
+  transition: opacity 0.3s ease;
 }
 
 .modalContainer {
@@ -49,7 +56,7 @@ export default {
   border-radius: 10px;
   width: 500px;
   height: 200px;
-  background-color: rgb(184, 190, 181);
+  background-color: #b8beb5;
 }
 
 .playerInfo {
@@ -68,11 +75,10 @@ export default {
 }
 
 .modalBtn {
-  float:right;
+  float: right;
   cursor: pointer;
   border: none;
   border-radius: 10px;
-  outline:none
+  outline: none;
 }
-
 </style>
