@@ -71,10 +71,10 @@ export default {
       isCorrect: null,
       correctAnswer: '',
       equationCount: 0,
-      randomNumber: null,
       isPlaying: false,
       showModal: false,
       nextNum: null,
+      randomNumber: null,
       errorMsg: '',
       inputDisabled: false,
       numbers: [...Array(11).keys()].slice(1),
@@ -84,18 +84,9 @@ export default {
   methods: {
     start() {
       if (!this.required()) return;
-      const randomSelected = Math.floor(
-        Math.random() * this.player.selectedNumbers.length,
-      );
-      this.equationCount += 1;
-      this.player.currentNumber = this.player.selectedNumbers[randomSelected];
-      this.correctAnswer = this.player.currentNumber * this.randomize();
-      this.isPlaying = true;
+      this.generateEquation();
       this.focusAnswer();
-    },
-    setErrorMsg(msg, bool = false) {
-      this.errorMsg = msg;
-      return bool;
+      this.isPlaying = true;
     },
     required() {
       if (this.player.name.trim().length <= 0) {
@@ -116,10 +107,9 @@ export default {
       }, 1000);
     },
     checkOnInput() {
-      if (!/^\d+$/.test(this.player.guess)) this.player.guess = '';
-      const isSameLen = this.player.guess.length === this.correctAnswer.toString().length;
+      if (!/^\d+$/.test(this.player.guess)) this.resetInput();
       const isAMatch = Number(this.player.guess) === Number(this.correctAnswer);
-      if (isSameLen) {
+      if (this.player.guess.length === this.correctAnswer.toString().length) {
         if (isAMatch) {
           this.getNext(isAMatch, 'correctCount');
         } else {
@@ -127,45 +117,22 @@ export default {
         }
       }
     },
-    randomize() {
-      if (this.randomNumber !== this.nextNum) {
-        this.randomNumber = this.nextNum;
-      } else if (this.randomNumber === this.nextNum) {
-        this.randomNumber = this.nextNum === 10 ? this.nextNum - 1 : this.nextNum + 1;
-      }
-
-      this.nextNum = Math.floor(Math.random() * 10) + 1;
-
-      return this.randomNumber;
-    },
     generateEquation() {
+      const randomSelectedIdx = Math.floor(Math.random() * this.player.selectedNumbers.length);
       this.resetInput();
       this.focusAnswer();
       this.isCorrect = null;
-      const randomSelected = Math.floor(
-        Math.random() * this.player.selectedNumbers.length,
-      );
-      this.player.currentNumber = this.player.selectedNumbers[randomSelected];
-      this.randomNumber = this.randomize();
-      this.correctAnswer = this.player.currentNumber * this.randomNumber;
       if (this.equationCount === 15) this.endGame();
       else this.equationCount += 1;
+      this.player.currentNumber = this.player.selectedNumbers[randomSelectedIdx];
+      this.correctAnswer = this.player.currentNumber * this.randomize();
     },
-    resetInput() {
-      this.player.guess = '';
-    },
-    resetGame() {
+    endGame() {
       this.previousPlayer = this.player;
       this.player = this.playerObject();
       this.equationCount = 0;
-    },
-    endGame() {
       this.isPlaying = false;
       this.showModal = true;
-      this.resetGame();
-    },
-    focusAnswer() {
-      this.$nextTick(() => this.$refs.answerInput.focus());
     },
     playerObject: () => ({
       name: '',
@@ -175,6 +142,20 @@ export default {
       selectedNumbers: [],
       currentNumber: null,
     }),
+    setErrorMsg(msg, bool = false) {
+      this.errorMsg = msg;
+      return bool;
+    },
+    resetInput() {
+      this.player.guess = '';
+    },
+    focusAnswer() {
+      this.$nextTick(() => this.$refs.answerInput.focus());
+    },
+    randomize() {
+      this.randomNumber = Math.floor(Math.random() * 10) + 1;
+      return this.randomNumber;
+    },
   },
   computed: {
     borderChangeOnAnswer() {
@@ -212,7 +193,7 @@ body {
   position: relative;
   display: grid;
   height: 500px;
-  width: 80%;
+  width: 70%;
   border-radius: 10px;
   box-shadow: 0px 10px 25px -5px #000000;
   align-self: center;
@@ -364,5 +345,31 @@ body {
   padding: 10px;
   font-size: 15px;
   color: #5f5f5f
+}
+
+@media screen and (max-width: 750px) {
+  .chooseNumberLabel {
+    font-size: 12px;
+  }
+  .numberItem {
+    font-size: 14px;
+  }
+  .nameInput {
+    display: block;
+    width: calc(100% - 10%);
+    margin: 10px;
+    padding: 0;
+    font-size: 14px;
+  }
+}
+@media screen and (max-width: 480px) {
+  .equation {
+    width: 100px;
+    font-size: 30px;
+  }
+  .eqCount {
+    padding: 5px;
+    font-size: 12px;
+  }
 }
 </style>
