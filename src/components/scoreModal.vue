@@ -3,14 +3,14 @@
     <div class="modalMask">
       <div class="modalContainer">
         <button class="modalBtn" @click="$emit('close')">X</button>
-        <div v-if="isAllCorrect">
+        <div class="imgWrapper" v-if="isAllCorrect">
           <img
             class="star"
             src="https://purepng.com/public/uploads/large/purepng.com-gold-starstargeometricallydecagonconcavestardomyellow-stargold-1421526501484pjepy.png"
             alt="star"
           />
         </div>
-        <div v-else>
+        <div class="imgWrapper" v-else>
           <img
             class="star"
             src="https://purepng.com/public/uploads/large/purepng.com-silver-starstargeometricallydecagonconcavestardomclipartsilver-1421526502895pbjlx.png"
@@ -66,10 +66,12 @@ export default {
   padding: 20px;
 }
 
-.star {
+.imgWrapper {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: center;
+}
+
+.star {
   width: 175px;
   padding: 20px;
 }
@@ -80,5 +82,28 @@ export default {
   border: none;
   border-radius: 10px;
   outline: none;
+}
+
+
+@media screen and (max-width: 540px) {
+  .modalContainer {
+    width: 300px;
+  }
+  .playerInfo {
+    padding: 0;
+  }
+  .imgWrapper {
+    display: flex;
+    align-items: center;
+  }
+  .playerInfo h3,
+  .playerInfo h4 {
+    margin: 0;
+    padding: 10px;
+    font-size: 13px;
+  }
+  .star {
+    width: 100px;
+  }
 }
 </style>

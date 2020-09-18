@@ -171,7 +171,7 @@ body {
   margin: 0;
   padding: 0;
   height: 100vh;
-  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-family: monospace, sans-serif;
 }
 #app {
   display: flex;
@@ -310,7 +310,6 @@ body {
   border-color: red;
 }
 
-
 .msg {
   font-size: 20px;
   position: absolute;
@@ -357,14 +356,17 @@ body {
   .nameInput {
     display: block;
     width: calc(100% - 10%);
-    margin: 10px;
+    margin: 10px auto;
     padding: 0;
     font-size: 14px;
   }
 }
 @media screen and (max-width: 480px) {
+  .msg {
+    top: 175px;
+  }
   .equation {
-    width: 100px;
+    width: 110px;
     font-size: 30px;
   }
   .eqCount {
