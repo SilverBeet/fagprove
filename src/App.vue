@@ -23,9 +23,9 @@
         </div>
         <input type="submit" class="submit" value="START" />
       </form>
-      <div v-show="isPlaying">
+      <div class="gameWrapper" v-show="isPlaying">
         <div class="equation">
-          <div class="eqCount">{{ equationCount }} av 15</div>
+          <div class="eqCount">{{ equationCount }} / 15</div>
           {{ player.currentNumber }}
           <span class="times">x</span>
           {{ randomNumber }}
@@ -191,8 +191,7 @@ body {
 
 .formContainer {
   position: relative;
-  display: grid;
-  height: 500px;
+  height: 315px;
   width: 70%;
   border-radius: 10px;
   box-shadow: 0px 10px 25px -5px #000000;
@@ -225,6 +224,13 @@ body {
   display: flex;
   align-items: center;
   margin: 0 auto;
+}
+
+.gameWrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .chooseNumberLabel {
@@ -275,7 +281,7 @@ body {
   padding: 20px;
   text-align: center;
   color: #dbdbdb;
-  margin: 75px auto;
+  margin: 40px auto;
   font-size: 70px;
 }
 
@@ -313,7 +319,7 @@ body {
 .msg {
   font-size: 20px;
   position: absolute;
-  top: 215px;
+  top: 205px;
   left: 50%;
   transform: translate(-50%, 50%);
   margin-bottom: 20px;
@@ -360,14 +366,30 @@ body {
     padding: 0;
     font-size: 14px;
   }
-}
-@media screen and (max-width: 480px) {
-  .msg {
-    top: 175px;
+  .formContainer {
+    height: 250px;
   }
   .equation {
-    width: 110px;
+    width: 200px;
+    font-size: 50px;
+    margin: 10px auto;
+  }
+  .msg {
+    top: 145px;
+    font-size: 18px;
+  }
+  .answerWrapper {
+    margin-top: 20px;
+  }
+}
+@media screen and (max-width: 480px) {
+  .formContainer {
+    height: 270px;
+  }
+  .equation {
+    width: 130px;
     font-size: 30px;
+    margin: 10px auto;
   }
   .eqCount {
     padding: 5px;
